@@ -45,6 +45,9 @@ func generateFile(gen *protogen.Plugin, file *protogen.File, goPackageName, goMo
 	}
 
 	for _, service := range file.Services {
+		if shouldSkipService(service) {
+			continue
+		}
 		serviceBaseName := strings.ToLower(service.GoName)
 		if strings.HasSuffix(serviceBaseName, "interface") {
 			serviceBaseName = strings.TrimSuffix(serviceBaseName, "interface")
@@ -87,6 +90,11 @@ func generateFile(gen *protogen.Plugin, file *protogen.File, goPackageName, goMo
 
 func shouldSkipMethod(method *protogen.Method) bool {
 	comments := method.Comments.Leading.String() + method.Comments.Trailing.String()
+	return strings.Contains(comments, "@mcp: reject")
+}
+
+func shouldSkipService(service *protogen.Service) bool {
+	comments := service.Comments.Leading.String() + service.Comments.Trailing.String()
 	return strings.Contains(comments, "@mcp: reject")
 }
 
