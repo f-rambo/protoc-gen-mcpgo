@@ -1,0 +1,5 @@
+# Ignore bin directory
+bin/
+
+# Ignore the binary itself if it's in the root (though Makefile now puts it in bin/)
+protoc-gen-mcpgo
