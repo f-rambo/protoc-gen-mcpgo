@@ -10,7 +10,7 @@ BINARY_DIR := $(GOBASE)/bin
 
 .PHONY: all build clean install uninstall
 
-all: build
+all: build install clean
 
 # Build the binary
 build:

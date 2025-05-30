@@ -100,7 +100,7 @@ func shouldSkipService(service *protogen.Service) bool {
 
 func generateServiceStruct(g *protogen.GeneratedFile, service *protogen.Service) {
 	g.P("type ", service.GoName, "McpService struct {")
-	g.P("	", service.GoName, " ", service.GoName)
+	g.P("	", service.GoName, " ", "*", service.GoName)
 	g.P("}")
 	g.P()
 }
@@ -110,7 +110,7 @@ func generateConstructor(g *protogen.GeneratedFile, service *protogen.Service) {
 	paramName := strings.ToLower(service.GoName[:1]) + service.GoName[1:]
 	// paramType := protogen.GoImportPath(protoGoPackageName).Ident(service.GoName)
 
-	g.P("func New", structName, "(", paramName, " ", service.GoName, ") *", structName, " {")
+	g.P("func New", structName, "(", paramName, " ", "*", service.GoName, ") *", structName, " {")
 	g.P("	return &", structName, "{")
 	g.P("		", service.GoName, ": ", paramName, ",")
 	g.P("	}")
@@ -128,7 +128,7 @@ func generateMcpSetupMethod(g *protogen.GeneratedFile, service *protogen.Service
 	receiver := strings.ToLower(service.GoName[:1])
 	structName := service.GoName + "McpService"
 
-	g.P("func (", receiver, " *", structName, ") ", methodName, "() (*", mcpServerPackage.Ident("MCPServer"), ", error) {")
+	g.P("func (", receiver, " *", structName, ") ", methodName, "() *", mcpServerPackage.Ident("MCPServer"), "{")
 	g.P("	ser := ", mcpServerPackage.Ident("NewMCPServer"), `("`, service.GoName, `", "0.0.1",`)
 	g.P("		", mcpServerPackage.Ident("WithToolCapabilities"), "(false), // Assuming default, make configurable if needed")
 	g.P("	)")
@@ -186,7 +186,7 @@ func generateMcpSetupMethod(g *protogen.GeneratedFile, service *protogen.Service
 		g.P("	ser.AddTool(tool_", rpcName, ", ", receiver, ".", rpcName, ")")
 	}
 	g.P()
-	g.P("	return ser, nil")
+	g.P("	return ser")
 	g.P("}")
 	g.P()
 }
